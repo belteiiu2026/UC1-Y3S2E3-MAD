@@ -11,7 +11,70 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
 
+    Future<List<String>> _loadProductFromServer() async {
+      await Future.delayed(Duration(seconds: 3));
+      // throw("Internal Server Error");
+      List<String> products = List.generate(10, (i) => "Product $i").toList();
+      return products;
+    }
 
+
+    Widget get _listRecomProductWidget {
+      Widget productsList = FutureBuilder(
+          future: _loadProductFromServer(),
+          builder: (BuildContext context, AsyncSnapshot snapshot){
+
+              // Uncompleted
+              if(snapshot.connectionState != ConnectionState.done){
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+              }
+
+              // Completed
+              // Error
+              if(snapshot.hasError) {
+                return Center(
+                  child: Text("${snapshot.error}"),
+                );
+              }
+
+              // Success
+              List<String> products = snapshot.data;
+
+              List<Widget> items =  products.map((p) {
+                return Card(
+                  child: Row(
+                    children: [
+                      Image.asset("assets/images/uc1.jpg", fit: BoxFit.cover, width: 100,height: 100,),
+                      // Text("$p"),
+                    ],
+                  ),
+                );
+              }).toList();
+
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: items,
+                ),
+              );
+
+
+              // return ListView.builder(
+              //     scrollDirection: Axis.vertical,
+              //     itemCount: products.length,
+              //     itemBuilder: (BuildContext context, int index){
+              //       String product = products[index];
+              //       return ListTile(
+              //         leading: Image.asset("assets/images/uc1.jpg"),
+              //         title: Text("$product"),
+              //       );
+              //     });
+
+          });
+      return productsList;
+    }
 
 
   @override
@@ -90,7 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _menuRowTitleWidget,
           _menuItemsRowWidget,
-          _recomRowTitleWidget
+          _recomRowTitleWidget,
+          _listRecomProductWidget
         ],
       )
     );

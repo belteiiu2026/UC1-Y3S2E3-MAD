@@ -43,7 +43,9 @@ class _State extends State<MainScreen> {
         fixedColor: Colors.amber,
         items: bottomNavBarItems,
         currentIndex: _indexSelectedItems,
-        onTap: _onTabChange
+        onTap: _onTabChange,
+      showUnselectedLabels: true,
+      showSelectedLabels: true,
     );
 
     return Scaffold(
